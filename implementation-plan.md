@@ -8,14 +8,17 @@ Get the skeleton of the project running end-to-end before writing any business l
 - [ ] Set up Express + TypeScript app with a health check endpoint
 - [ ] Set up React + Vite + TypeScript app
 - [ ] Configure Tailwind CSS
-- [ ] Set up Prisma with PostgreSQL connection
-- [ ] Create `docker-compose.yml` for local dev (postgres, backend, frontend)
-- [ ] Configure environment variables (`.env` files, `.env.example`)
-- [ ] Verify full local stack runs with `docker compose up`
+- [ ] Set up PostgreSQL database
 
 ---
 
 ## Phase 2 — Database Schema
+
+- [ ] Set up Prisma
+- [ ] Create `docker-compose.yml` for local dev (postgres, backend, frontend)
+- [ ] Configure environment variables (`.env` files, `.env.example`)
+- [ ] Verify full local stack runs with `docker compose up`
+
 
 Define the full data model before building features.
 
