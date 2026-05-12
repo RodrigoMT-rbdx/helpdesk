@@ -28,17 +28,12 @@ export type User = Prisma.UserModel
  */
 export type Session = Prisma.SessionModel
 /**
- * Model Ticket
+ * Model Account
  * 
  */
-export type Ticket = Prisma.TicketModel
+export type Account = Prisma.AccountModel
 /**
- * Model Message
+ * Model Verification
  * 
  */
-export type Message = Prisma.MessageModel
-/**
- * Model KnowledgeBaseArticle
- * 
- */
-export type KnowledgeBaseArticle = Prisma.KnowledgeBaseArticleModel
+export type Verification = Prisma.VerificationModel
