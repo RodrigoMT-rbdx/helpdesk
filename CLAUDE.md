@@ -31,6 +31,47 @@ bun run dev:client   # start Vite
 - Tailwind is loaded via `@import "tailwindcss"` in `client/src/index.css` (v4 style, no config file)
 - Use context7 MCP server to fetch up-to-date documentation for libraries
 
+## Authentication
+**Library**: Better Auth (`better-auth`) — email/password only, **sign-up is disabled** (accounts created via seed script).
+
+**Server** (`server/src/lib/auth.ts`):
+- Mounted at `/api/auth/*` via `toNodeHandler(auth)` — must be registered before `express.json()`
+- Uses Prisma adapter with PostgreSQL
+- Trusted origin configured via `CLIENT_ORIGIN` env var (default: `http://localhost:5173`)
+- User has a custom `role` field: `"admin" | "agent"` (default `"agent"`, not settable on input)
+
+**Middleware** (`server/src/middleware/auth.ts`):
+- `authMiddleware` — runs on all requests, attaches `req.user` and `req.session` if a valid session cookie exists
+- `requireAuth` — guards routes, returns 401 if `req.user` is not set
+
+**Client** (`client/src/lib/auth-client.ts`):
+- `authClient` from `better-auth/react`, pointed at `http://localhost:3001`
+- Use `authClient.signIn.email({ email, password })` to log in
+- Use `authClient.signOut()` to log out
+- Use `authClient.useSession()` to read session state in components (`{ data: session, isPending }`)
+
+**Route protection** (client-side, `client/src/App.tsx`):
+- `<ProtectedRoute>` component checks `authClient.useSession()` and redirects to `/login` if no session
+
+## UI — shadcn/ui
+shadcn/ui is installed in `client/` with the **base-nova** style, **neutral** base color, and CSS variables (Tailwind v4 compatible).
+
+**Add components**: `npx shadcn@latest add <component>` from the `client/` directory.
+
+**Installed components**: `button`, `input`, `label`, `card`, `alert`
+
+**Conventions**:
+- Use shadcn design tokens (`text-destructive`, `bg-background`, etc.) — not hardcoded Tailwind color classes
+- Form validation errors and server errors use `<Alert variant="destructive"><AlertDescription>…</AlertDescription></Alert>`
+- `Input` component suppresses Chrome autofill styles via inset `box-shadow` trick
+
+**Path alias**: `@/*` → `client/src/*` — configured in both `tsconfig.json` and `vite.config.ts`.
+
+**tsconfig quirks**:
+- `baseUrl` deprecation warning (TS5.x) is harmless — do NOT add `ignoreDeprecations: "6.0"`, it is invalid in TS 5.x and breaks the build
+- `tsconfig.node.json` must not have `allowImportingTsExtensions: true` alongside `composite: true`
+- `tsc -b` may emit a `vite.config.js` to the client root — delete it if it appears
+
 ## Documentation
 Always use **context7** to fetch up-to-date docs before writing code for any library in this project. Resolve the library ID first, then query docs.
 
@@ -42,3 +83,5 @@ Libraries to resolve via context7:
 - `React` → resolve fresh each time
 - `Tailwind CSS` → resolve fresh each time
 - `React Router` → resolve fresh each time
+- `Better Auth` → use skill `better-auth-best-practices`
+- `shadcn/ui` → `/llmstxt/ui_shadcn_llms_txt`
