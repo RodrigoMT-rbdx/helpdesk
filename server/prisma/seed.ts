@@ -7,10 +7,13 @@ import { hashPassword } from "better-auth/crypto";
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! });
 const prisma = new PrismaClient({ adapter });
 
-const email = process.env.SEED_ADMIN_EMAIL ?? "admin@example.com";
-const password = process.env.SEED_ADMIN_PASSWORD ?? "password123";
+const adminEmail = process.env.SEED_ADMIN_EMAIL ?? "admin@example.com";
+const adminPassword = process.env.SEED_ADMIN_PASSWORD ?? "password123";
 
-async function main() {
+const agentEmail = "agent@example.com";
+const agentPassword = "password123";
+
+async function seedUser(email: string, password: string, name: string, role: Role) {
   const hashed = await hashPassword(password);
 
   const user = await prisma.user.upsert({
@@ -18,10 +21,10 @@ async function main() {
     update: {},
     create: {
       id: crypto.randomUUID(),
-      name: "Admin",
+      name,
       email,
       emailVerified: true,
-      role: Role.admin,
+      role,
       createdAt: new Date(),
       updatedAt: new Date(),
     },
@@ -41,7 +44,12 @@ async function main() {
     },
   });
 
-  console.log(`Seeded admin user: ${email}`);
+  console.log(`Seeded ${role} user: ${email}`);
+}
+
+async function main() {
+  await seedUser(adminEmail, adminPassword, "Admin", Role.admin);
+  await seedUser(agentEmail, agentPassword, "Agent", Role.agent);
 }
 
 main()

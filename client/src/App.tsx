@@ -3,6 +3,7 @@ import { Routes, Route, Navigate, Outlet } from "react-router";
 import { authClient } from "./lib/auth-client";
 import Login from "./pages/Login";
 import Layout from "./components/Layout";
+import Users from "./pages/Users";
 
 type HealthStatus = "loading" | "ok" | "error";
 
@@ -64,6 +65,25 @@ function ProtectedRoute() {
   return <Outlet />;
 }
 
+function AdminRoute() {
+  const { data: session, isPending } = authClient.useSession();
+
+  if (isPending) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  const role = (session?.user as { role?: string } | undefined)?.role;
+  if (!session || role !== "admin") {
+    return <Navigate to="/" replace />;
+  }
+
+  return <Outlet />;
+}
+
 export default function App() {
   return (
     <Routes>
@@ -71,6 +91,9 @@ export default function App() {
       <Route element={<ProtectedRoute />}>
         <Route element={<Layout />}>
           <Route path="/" element={<Home />} />
+          <Route element={<AdminRoute />}>
+            <Route path="/users" element={<Users />} />
+          </Route>
         </Route>
       </Route>
     </Routes>
