@@ -2,4 +2,9 @@ node_modules/
 dist/
 .env
 .env.local
+.env.test
 *.js.map
+
+# Playwright
+e2e/playwright-report/
+e2e/test-results/
