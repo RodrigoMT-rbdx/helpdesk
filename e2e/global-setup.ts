@@ -7,9 +7,13 @@ const serverDir = path.resolve(__dirname, "../server");
 export default async function globalSetup() {
   config({ path: path.resolve(serverDir, ".env.test") });
 
-  execSync("bunx prisma migrate reset --force --skip-generate", {
+  execSync("bunx prisma migrate reset --force", {
     cwd: serverDir,
-    env: { ...process.env, NODE_ENV: "test" },
+    env: {
+      ...process.env,
+      NODE_ENV: "test",
+      PRISMA_USER_CONSENT_FOR_DANGEROUS_AI_ACTION: "yes",
+    },
     stdio: "inherit",
   });
 }

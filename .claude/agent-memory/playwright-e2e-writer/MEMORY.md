@@ -1,0 +1,3 @@
+- [Test Infrastructure](project-test-infrastructure.md) — config location, run command, test accounts, globalSetup Prisma quirks (consent env var, no --skip-generate)
+- [UI Selector Quirks](ui-selector-quirks.md) — CardTitle is a div not heading; type=email native validation blocks Zod; real h1 on Home and Users pages
+- [App Routes and Auth](app-routes-and-auth.md) — route table, ProtectedRoute/AdminRoute behavior, login form, session persistence, /login has no redirect-if-authed guard
