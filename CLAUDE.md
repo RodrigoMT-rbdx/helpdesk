@@ -26,26 +26,6 @@ bun run dev:server   # start Express with --watch
 bun run dev:client   # start Vite
 ```
 
-## Testing — Playwright (e2e/)
-**Config**: `e2e/playwright.config.ts` — Chromium only, baseURL `http://localhost:5173`.
-
-**Separate test database**: `helpdesk_test` (config in `server/.env.test`, gitignored).
-
-**Global setup** (`e2e/global-setup.ts`): runs `prisma migrate reset --force` against `helpdesk_test` before each test run — drops, recreates, migrates, and seeds.
-
-**Global teardown** (`e2e/global-teardown.ts`): intentional no-op — test DB is left intact after runs for post-failure inspection.
-
-**Commands**:
-```bash
-bun run test:e2e        # run all e2e tests (headless)
-bun run test:e2e:ui     # open Playwright UI mode
-bun run db:test:reset   # manually drop → recreate → migrate → seed helpdesk_test
-```
-
-**`server/prisma.config.ts`** loads `.env.test` automatically when `NODE_ENV=test`, so all Prisma CLI commands target the test DB when run with `NODE_ENV=test`.
-
-**Rate limiting** is disabled in dev and test — only active in `production` (`server/src/index.ts`). This prevents Playwright tests from hitting rate limits on auth routes.
-
 ## Key conventions
 - Server routes live in `server/src/routes/` and are mounted under `/api` in `server/src/index.ts`
 - Client proxies `/api/*` to `localhost:3001` via Vite's `server.proxy`
@@ -92,6 +72,14 @@ shadcn/ui is installed in `client/` with the **base-nova** style, **neutral** ba
 - `baseUrl` deprecation warning (TS5.x) is harmless — do NOT add `ignoreDeprecations: "6.0"`, it is invalid in TS 5.x and breaks the build
 - `tsconfig.node.json` must not have `allowImportingTsExtensions: true` alongside `composite: true`
 - `tsc -b` may emit a `vite.config.js` to the client root — delete it if it appears
+
+## E2E Testing
+Use the **`playwright-e2e-writer`** agent for all Playwright test work. Trigger it when:
+- A UI feature or user journey is complete and needs test coverage
+- The user explicitly asks to write E2E tests
+- A significant auth, routing, or permission flow is added or changed
+
+The agent already knows the full test infrastructure (config, test DB, seed accounts, commands). Do not write Playwright tests inline — always delegate to the agent.
 
 ## Documentation
 Always use **context7** to fetch up-to-date docs before writing code for any library in this project. Resolve the library ID first, then query docs.
