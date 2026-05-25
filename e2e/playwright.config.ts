@@ -29,6 +29,7 @@ export default defineConfig({
     },
   ],
   globalSetup: "./global-setup.ts",
+  globalTeardown: "./global-teardown.ts",
   webServer: [
     {
       command: "bun src/index.ts",

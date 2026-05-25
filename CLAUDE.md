@@ -16,7 +16,8 @@ A full-stack support ticket management system. Agents manage inbound tickets, se
 ```
 tickets/
 ├── client/      # React + Vite app (port 5173 in dev)
-└── server/      # Express API (port 3001 in dev)
+├── server/      # Express API (port 3001 in dev)
+└── e2e/         # Playwright end-to-end tests
 ```
 
 ## Dev commands
@@ -24,6 +25,26 @@ tickets/
 bun run dev:server   # start Express with --watch
 bun run dev:client   # start Vite
 ```
+
+## Testing — Playwright (e2e/)
+**Config**: `e2e/playwright.config.ts` — Chromium only, baseURL `http://localhost:5173`.
+
+**Separate test database**: `helpdesk_test` (config in `server/.env.test`, gitignored).
+
+**Global setup** (`e2e/global-setup.ts`): runs `prisma migrate reset --force` against `helpdesk_test` before each test run — drops, recreates, migrates, and seeds.
+
+**Global teardown** (`e2e/global-teardown.ts`): intentional no-op — test DB is left intact after runs for post-failure inspection.
+
+**Commands**:
+```bash
+bun run test:e2e        # run all e2e tests (headless)
+bun run test:e2e:ui     # open Playwright UI mode
+bun run db:test:reset   # manually drop → recreate → migrate → seed helpdesk_test
+```
+
+**`server/prisma.config.ts`** loads `.env.test` automatically when `NODE_ENV=test`, so all Prisma CLI commands target the test DB when run with `NODE_ENV=test`.
+
+**Rate limiting** is disabled in dev and test — only active in `production` (`server/src/index.ts`). This prevents Playwright tests from hitting rate limits on auth routes.
 
 ## Key conventions
 - Server routes live in `server/src/routes/` and are mounted under `/api` in `server/src/index.ts`

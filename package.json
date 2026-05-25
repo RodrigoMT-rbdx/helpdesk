@@ -8,6 +8,7 @@
     "dev:server": "bun run --filter server dev",
     "dev:client": "bun run --filter client dev",
     "test:e2e": "bun run --filter e2e test",
-    "test:e2e:ui": "bun run --filter e2e test:ui"
+    "test:e2e:ui": "bun run --filter e2e test:ui",
+    "db:test:reset": "bun run --filter server db:test:reset"
   }
 }

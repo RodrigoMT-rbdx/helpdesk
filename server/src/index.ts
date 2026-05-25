@@ -34,8 +34,10 @@ app.use(helmet({
   hsts: env.NODE_ENV === "production" ? { maxAge: 31536000, includeSubDomains: true } : false,
 }));
 app.use(cors({ origin: env.CLIENT_ORIGIN, credentials: true }));
-app.use("/api/auth/sign-in/email", signInLimiter);
-app.use("/api/auth", authLimiter);
+if (env.NODE_ENV === "production") {
+  app.use("/api/auth/sign-in/email", signInLimiter);
+  app.use("/api/auth", authLimiter);
+}
 app.all("/api/auth/{*path}", toNodeHandler(auth));
 app.use(express.json());
 app.use(cookieParser());
