@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   Table,
@@ -18,27 +19,22 @@ type User = {
   createdAt: string;
 };
 
-export default function Users() {
-  const [users, setUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+async function fetchUsers(): Promise<User[]> {
+  const res = await axios.get<{ users: User[] }>("/api/users");
+  return res.data.users;
+}
 
-  useEffect(() => {
-    fetch("/api/users")
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to load users");
-        return res.json() as Promise<{ users: User[] }>;
-      })
-      .then((data) => setUsers(data.users))
-      .catch((err: Error) => setError(err.message))
-      .finally(() => setLoading(false));
-  }, []);
+export default function Users() {
+  const { data: users = [], isPending, error } = useQuery({
+    queryKey: ["users"],
+    queryFn: fetchUsers,
+  });
 
   return (
     <div className="px-6 py-10 max-w-4xl mx-auto">
       <h1 className="text-2xl font-semibold mb-6">Users</h1>
 
-      {loading && (
+      {isPending && (
         <div className="flex justify-center py-16">
           <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
         </div>
@@ -46,11 +42,11 @@ export default function Users() {
 
       {error && (
         <Alert variant="destructive">
-          <AlertDescription>{error}</AlertDescription>
+          <AlertDescription>{error.message}</AlertDescription>
         </Alert>
       )}
 
-      {!loading && !error && (
+      {!isPending && !error && (
         <div className="rounded-lg border">
           <Table>
             <TableHeader>

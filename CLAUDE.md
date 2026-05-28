@@ -54,12 +54,20 @@ bun run dev:client   # start Vite
 **Route protection** (client-side, `client/src/App.tsx`):
 - `<ProtectedRoute>` component checks `authClient.useSession()` and redirects to `/login` if no session
 
+## Data fetching — axios + TanStack Query
+All client-side HTTP requests use **axios** (`axios`) and **TanStack Query** (`@tanstack/react-query`). Both are installed in `client/`.
+
+- `QueryClientProvider` is set up in `client/src/main.tsx` — do not add it elsewhere
+- Use `useQuery` for reads and `useMutation` for writes — never use `useEffect` + `useState` for data fetching
+- Define fetcher functions outside the component using `axios.get` / `axios.post` etc., typed with generics
+- `axios` throws on non-2xx automatically — no manual `res.ok` checks needed
+
 ## UI — shadcn/ui
 shadcn/ui is installed in `client/` with the **base-nova** style, **neutral** base color, and CSS variables (Tailwind v4 compatible).
 
 **Add components**: `npx shadcn@latest add <component>` from the `client/` directory.
 
-**Installed components**: `button`, `input`, `label`, `card`, `alert`
+**Installed components**: `button`, `input`, `label`, `card`, `alert`, `table`, `badge`
 
 **Conventions**:
 - Use shadcn design tokens (`text-destructive`, `bg-background`, etc.) — not hardcoded Tailwind color classes

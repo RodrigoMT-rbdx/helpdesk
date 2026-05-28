@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Routes, Route, Navigate, Outlet } from "react-router";
+import axios from "axios";
 import { authClient } from "./lib/auth-client";
 import Login from "./pages/Login";
 import Layout from "./components/Layout";
@@ -12,11 +13,11 @@ function Home() {
   const [timestamp, setTimestamp] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch("/api/health")
-      .then((res) => res.json())
-      .then((data: { status: string; timestamp: string }) => {
-        setStatus(data.status === "ok" ? "ok" : "error");
-        setTimestamp(data.timestamp);
+    axios
+      .get<{ status: string; timestamp: string }>("/api/health")
+      .then((res) => {
+        setStatus(res.data.status === "ok" ? "ok" : "error");
+        setTimestamp(res.data.timestamp);
       })
       .catch(() => setStatus("error"));
   }, []);
