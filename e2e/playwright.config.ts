@@ -8,7 +8,7 @@ const testEnv = {
   NODE_ENV: "test",
   DATABASE_URL: process.env.DATABASE_URL!,
   BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET!,
-  CLIENT_ORIGIN: "http://localhost:5173",
+  CLIENT_ORIGIN: "http://localhost:5184",
 };
 
 export default defineConfig({
@@ -19,7 +19,7 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: "html",
   use: {
-    baseURL: "http://localhost:5173",
+    baseURL: "http://localhost:5184",
     trace: "on-first-retry",
   },
   projects: [
@@ -41,7 +41,7 @@ export default defineConfig({
     {
       command: "bun run dev",
       cwd: path.resolve(__dirname, "../client"),
-      url: "http://localhost:5173",
+      url: "http://localhost:5184",
       reuseExistingServer: !process.env.CI,
     },
   ],

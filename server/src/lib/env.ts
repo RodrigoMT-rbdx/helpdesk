@@ -9,7 +9,7 @@ if (missing.length > 0) {
 export const env = {
   DATABASE_URL: process.env.DATABASE_URL as string,
   BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET as string,
-  CLIENT_ORIGIN: process.env.CLIENT_ORIGIN ?? "http://localhost:5173",
+  CLIENT_ORIGIN: process.env.CLIENT_ORIGIN ?? "http://localhost:5184",
   PORT: process.env.PORT ?? "3001",
   NODE_ENV: process.env.NODE_ENV ?? "development",
 };
