@@ -8,6 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
 
 type User = {
   id: string;
@@ -66,15 +67,9 @@ export default function Users() {
                   <TableCell className="font-medium">{user.name}</TableCell>
                   <TableCell>{user.email}</TableCell>
                   <TableCell>
-                    <span
-                      className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
-                        user.role === "admin"
-                          ? "bg-blue-50 text-blue-700"
-                          : "bg-muted text-muted-foreground"
-                      }`}
-                    >
+                    <Badge variant={user.role === "admin" ? "default" : "secondary"}>
                       {user.role}
-                    </span>
+                    </Badge>
                   </TableCell>
                   <TableCell className="text-muted-foreground">
                     {new Date(user.createdAt).toLocaleDateString("en-US", {
