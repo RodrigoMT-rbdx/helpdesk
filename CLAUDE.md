@@ -81,6 +81,30 @@ shadcn/ui is installed in `client/` with the **base-nova** style, **neutral** ba
 - `tsconfig.node.json` must not have `allowImportingTsExtensions: true` alongside `composite: true`
 - `tsc -b` may emit a `vite.config.js` to the client root — delete it if it appears
 
+## Component Testing — Vitest + React Testing Library
+Client component/unit tests use **Vitest** with **React Testing Library** and **jsdom**. Installed in `client/`: `vitest`, `@testing-library/react`, `@testing-library/jest-dom`, `@testing-library/user-event`, `jsdom`, `@vitest/coverage-v8`.
+
+**Run tests** (from `client/`):
+```bash
+bun run test         # run once (vitest run)
+bun run test:watch   # watch mode
+```
+
+**Config & setup**:
+- Test config lives in the `test` block of `client/vite.config.ts` (`environment: "jsdom"`, `globals: true`, `setupFiles: ["./src/test/setup.ts"]`)
+- `client/src/test/setup.ts` registers jest-dom matchers and runs `cleanup()` after each test
+- `client/src/test/utils.tsx` exports `renderWithProviders(ui)` — wraps the tree in a fresh `QueryClientProvider` (retries disabled, no cache leakage between tests). Use it for any component that calls `useQuery`/`useMutation`.
+
+**Conventions**:
+- Co-locate test files next to the component: `Foo.tsx` → `Foo.test.tsx`
+- Mock the network at the `axios` boundary with `vi.mock("axios")` + `vi.mocked(axios.get)` — never hit the real API
+- Query by role/text (`getByRole`, `findByText`) over test IDs; use `findBy*` to await async query results and `queryBy*` to assert absence
+- Cover each render branch of a data component: pending (skeletons), success (data rows), empty state, and error (`role="alert"`)
+- Component tests assume auth is already satisfied — auth/routing/permission flows are covered by Playwright E2E, not here
+- Reset mocks in `beforeEach` with `vi.clearAllMocks()`
+
+See `client/src/pages/Users.test.tsx` for the reference example.
+
 ## E2E Testing
 Use the **`playwright-e2e-writer`** agent for all Playwright test work. Trigger it when:
 - A UI feature or user journey is complete and needs test coverage
