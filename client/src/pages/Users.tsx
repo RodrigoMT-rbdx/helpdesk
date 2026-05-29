@@ -1,6 +1,9 @@
+import { useState } from "react";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import CreateUserDialog from "@/components/CreateUserDialog";
 import {
   Table,
   TableBody,
@@ -26,6 +29,7 @@ async function fetchUsers(): Promise<User[]> {
 }
 
 export default function Users() {
+  const [dialogOpen, setDialogOpen] = useState(false);
   const { data: users = [], isPending, error } = useQuery({
     queryKey: ["users"],
     queryFn: fetchUsers,
@@ -33,7 +37,12 @@ export default function Users() {
 
   return (
     <div className="px-6 py-10 max-w-4xl mx-auto">
-      <h1 className="text-2xl font-semibold mb-6">Users</h1>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-semibold">Users</h1>
+        <Button onClick={() => setDialogOpen(true)}>New user</Button>
+      </div>
+
+      <CreateUserDialog open={dialogOpen} onOpenChange={setDialogOpen} />
 
       {isPending && (
         <div className="rounded-lg border">
